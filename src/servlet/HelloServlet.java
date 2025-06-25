@@ -13,8 +13,10 @@ public class HelloServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		resp.setContentType("text/html");
-		resp.getWriter().println("<h2>Olá! Essa resposta veio da Servlet Java 🚀</h2>");
+		String nome = req.getParameter("nome");
+		
+		resp.setContentType("text/html;charset=UTF-8");
+		resp.getWriter().println("<h2>Olá, " + nome + "! Seja bem-vindo </h2>");
 	}
 
 }
