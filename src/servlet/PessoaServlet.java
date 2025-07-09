@@ -10,30 +10,36 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-
+import dao.PessoaDAO;
 import model.Pessoa;
-import repository.Agenda;
 
 @WebServlet("/pessoas")
-public class PessoaServlet extends HttpServlet{
-	
-	protected void doPost(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
-		String nome = req.getParameter("nome");
-		int idade = Integer.parseInt(req.getParameter("idade"));
-		
-		Pessoa novaPessoa = new Pessoa(nome, idade);
-		Agenda.adicionar(novaPessoa);
-		
-		resp.sendRedirect("pessoas");	
-	}
-	
-	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-		throws ServletException, IOException {
-		List<Pessoa> lista =Agenda.listar();
-		req.setAttribute("pessoas", lista);
-		RequestDispatcher dispatcher = req.getRequestDispatcher("pessoas.jsp");
-		dispatcher.forward(req, resp);
-	}
+public class PessoaServlet extends HttpServlet {
+    private PessoaDAO dao = new PessoaDAO();
 
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        try {
+            String nome = req.getParameter("nome");
+            int idade = Integer.parseInt(req.getParameter("idade"));
+
+            dao.salvar(new Pessoa(nome, idade));
+            resp.sendRedirect("pessoas");
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
+
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        try {
+            List<Pessoa> pessoas = dao.listar();
+            req.setAttribute("pessoas", pessoas);
+            RequestDispatcher rd = req.getRequestDispatcher("pessoas.jsp");
+            rd.forward(req, resp);
+        } catch (Exception e) {
+            throw new ServletException(e);
+        }
+    }
 }
+
